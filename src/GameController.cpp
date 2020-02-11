@@ -16,24 +16,49 @@ GameController::GameController(RenderWindow* window, float frame_rate, string rp
 GameController::~GameController(){
     delete _frame_timer;
     delete _rp;
+    for (auto go: _game_objects){
+        delete go.second;
+    }
+}
+
+void GameController::run(){
+    while (_window->isOpen()){ 
+        updateAll();
+        drawFrame();
+        Event e;
+        while (_window->pollEvent(e)){
+            switch(e.type){
+                case Event::Closed:
+                    _window->close();
+                    break;
+                default:
+                    handleEvent(e);
+                    break;
+            }
+        }
+    }
 }
 
 void GameController::drawFrame(){
     _frame_timer->restart();
 
-    //TODO: draw all objects
+    for (auto go: _game_objects){
+        go.second->draw();
+    }
 
     _window->display();
     Time sleep_time = _frame_time - _frame_timer->getElapsedTime();
     sleep(sleep_time);
 }
 
-void GameController::handleEvent(Event& e){
-
-    switch (e.type){
-        default:
-            //TODO: PASS EVENTS TO CLASS MEMBERS
-            break; 
+void GameController::updateAll(){
+    for (auto go: _game_objects){
+        go.second->update();
     }
+}
 
+void GameController::handleEvent(Event& e){
+    for (auto go: _game_objects){
+        go.second->handleEvent(e);
+    }
 }

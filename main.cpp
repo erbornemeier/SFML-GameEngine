@@ -14,22 +14,8 @@ int main(){
 
     GameController game(window, 60);
 
-    while (window->isOpen()){
-        
-        game.drawFrame();
+    //TODO add all game objects to game
 
-        Event e;
-        while (window->pollEvent(e)){
-            switch(e.type){
-                case Event::Closed:
-                    window->close();
-                    break;
-                default:
-                    game.handleEvent(e);
-                    break;
-            }
-        }
-
-    }
+    game.run();
 
 }

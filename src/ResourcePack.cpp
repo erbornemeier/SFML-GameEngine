@@ -37,6 +37,7 @@ void ResourcePack::_loadTexturesFromFile(ifstream& fin){
         //read in a line from the file
         string line;
         getline(fin, line);
+        if (line.length() == 0 || line[0] == '#') continue; //skip if commented or empty
         istringstream iss(line);
         
         //extract required 3 values
@@ -47,7 +48,7 @@ void ResourcePack::_loadTexturesFromFile(ifstream& fin){
         if (type == "Image"){
             _addImageToSpriteMap(name, resource_file);
         }
-        else if (type == "Animated"){
+        else if (type == "Animation"){
             int x, y, w, h, s;
             iss >> x >> y >> w >> h >> s;
             _addAnimatedImageToSpriteMap(name, resource_file, x, y, w, h, s);

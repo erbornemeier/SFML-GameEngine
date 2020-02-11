@@ -6,6 +6,9 @@ using namespace std;
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
+#ifndef _Resource_Pack
+#define _Resource_Pack
+
 class ResourcePack{
     public:
         ResourcePack(string rp_name = "default");
@@ -28,3 +31,5 @@ class ResourcePack{
         //TODO: add audio map
 
 };
+
+#endif
