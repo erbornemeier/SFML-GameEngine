@@ -8,6 +8,7 @@ GameController::GameController(RenderWindow* window, float frame_rate, string rp
     window = window;
     _frame_time = Time(seconds(1.0 / frame_rate));
     _frame_timer = new Clock;
+    _update_timer = new Clock;
 
     //load resource pack
     _rp = new ResourcePack(rp_name);
@@ -15,6 +16,7 @@ GameController::GameController(RenderWindow* window, float frame_rate, string rp
 
 GameController::~GameController(){
     delete _frame_timer;
+    delete _update_timer;
     delete _rp;
     for (auto go: _game_objects){
         delete go.second;
@@ -52,9 +54,12 @@ void GameController::drawFrame(){
 }
 
 void GameController::updateAll(){
+    
+    Time since_last_update = _update_timer->getElapsedTime();
     for (auto go: _game_objects){
-        go.second->update();
+        go.second->update(since_last_update);
     }
+    _update_timer->restart();
 }
 
 void GameController::handleEvent(Event& e){

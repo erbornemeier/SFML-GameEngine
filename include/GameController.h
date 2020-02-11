@@ -25,6 +25,7 @@ private:
     RenderWindow* _window;
     Time _frame_time;
     Clock* _frame_timer;
+    Clock* _update_timer;
 
     //graphics objects
     ResourcePack* _rp;

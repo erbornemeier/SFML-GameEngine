@@ -12,7 +12,7 @@ class GameObject {
         GameObject(){};
         ~GameObject(){};
         virtual void draw() = 0;
-        virtual void update() = 0;
+        virtual void update(Time since_last_update) = 0;
         virtual void handleEvent(Event& e) = 0;
 
     public:
