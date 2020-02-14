@@ -1,99 +1,44 @@
-########################################
-## SETUP MAKEFILE
-##      Set the appropriate TARGET (our
-## executable name) and any OBJECT files
-## we need to compile for this program. 
-## We would have one object file for every
-## cpp file that needs to be compiled and
-## linked together.
-##
-## Next set the path to our local
-## include/ and lib/ folders.
-## (If you we are compiling in the lab,
-## then you can ignore these values.
-## They are only for if you are
-## compiling on your personal machine.)
-##
-## Set if we are compiling in the lab
-## environment or not.  Set to:
-##    1 - if compiling in the Lab
-##    0 - if compiling at home
-##
-########################################
-
 TARGET = bank_tanks
-OBJECTS = main.o src/GameController.o
-
-LOCAL_INC_PATH = include/
-LOCAL_LIB_PATH = ./
-
-BUILDING_IN_LAB = 0
-
-#########################################################################################
-#########################################################################################
-#########################################################################################
-##
-## !!!STOP!!!
-## THERE IS NO NEED TO MODIFY ANYTHING BELOW THIS LINE
-## IT WILL WORK FOR YOU
-
-
-#############################
-## COMPILING INFO
-#############################
-
 CXX    = g++
 CFLAGS = -Wall -g -std=c++11
 
-LAB_INC_PATH = Z:/CSCI441/include
-LAB_LIB_PATH = Z:/CSCI441/lib
+SOURCE_DIR  = src/
+INCLUDE_DIR = include/
+BUILD_DIR = build/
+LIB_DIR = ./
+LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
-# if we are not building in the Lab
-ifeq ($(BUILDING_IN_LAB), 0)
-    # then set our lab paths to our local paths
-    # so the Makefile will still work seamlessly
-    LAB_INC_PATH = $(LOCAL_INC_PATH)
-    LAB_LIB_PATH = $(LOCAL_LIB_PATH)
-else
-	CXX = C:/Rtools/mingw_64/bin/g++.exe
-endif
+###########################################################
+#get all source files in source directory + main.cpp
+_src = $(wildcard $(SOURCE_DIR)*.cpp)
 
-INCPATH += -I$(LAB_INC_PATH)
-LIBPATH += -L$(LAB_LIB_PATH)
+# get all object files by replacing source path with build path and
+# convert .cpp extension to .o
+obj = $(patsubst $(SOURCE_DIR)%,$(BUILD_DIR)%,$(_src))
+_obj = $(obj:.cpp=.o)
 
-LIBS +=  -lsfml-graphics -lsfml-window -lsfml-system
+# set include and lib path flags
+INC_PATH = -I$(INCLUDE_DIR)
+LIB_PATH = -L$(LIB_DIR)
 
-#############################
-## COMPILATION INSTRUCTIONS 
-#############################
+###########################################################
+
 
 all: $(TARGET)
+	
+main.cpp: main.o
+
+main.o: $(_obj)
+	$(CXX) $(CFLAGS) $(INC_PATH) -c main.cpp -o $(BUILD_DIR)main.o
+
+$(_obj):
+	echo $@
+	$(CXX) $(CFLAGS) $(INC_PATH) -c $(patsubst $(BUILD_DIR)%.o,$(SOURCE_DIR)%.cpp,$@) -o $@ 
+
+.PHONY: clean
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
-	
-build: $(OBJECTS)
+	rm -f $(BUILD_DIR)main.o $(_obj) bank_tanks
 
-new: clean $(TARGET)
-
-run: $(TARGET)
-	./$(TARGET)
-
-depend:
-	rm -f Makefile.bak
-	mv Makefile Makefile.bak
-	sed '/^# DEPENDENCIES/,$$d' Makefile.bak > Makefile
-	echo '# DEPENDENCIES' >> Makefile
-	$(CXX) $(INCPATH) -MM *.cpp >> Makefile
-
-.c.o: 	
-	$(CXX) $(CFLAGS) $(INCPATH) -c -o $@ $<
-
-.cc.o: 	
-	$(CXX) $(CFLAGS) $(INCPATH) -c -o $@ $<
-
-.cpp.o: 	
-	$(CXX) $(CFLAGS) $(INCPATH) -c -o $@ $<
-
-$(TARGET): $(OBJECTS) 
-	$(CXX) $(CFLAGS) -o $@ $^ $(LIBPATH) $(LIBS)
+$(TARGET): main.cpp $(_src)
+	$(CXX) $(CFLAGS) $(INC_PATH) -o $@ $^ $(LIB_PATH) $(LIBS)

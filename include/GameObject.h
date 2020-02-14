@@ -10,7 +10,7 @@ using namespace sf;
 class GameObject {
     public:
         GameObject(){};
-        ~GameObject(){};
+        virtual ~GameObject() = 0;
         virtual void draw() = 0;
         virtual void update(Time since_last_update) = 0;
         virtual void handleEvent(Event& e) = 0;
